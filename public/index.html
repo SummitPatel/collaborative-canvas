@@ -1,0 +1,130 @@
+<html>
+
+<head>
+  <title>
+    Canvas Test
+  </title>
+</head>
+
+<body>
+  <!-- Drawing area -->
+  <canvas id="canvas" width="500" height="300" style="border: 2px grey solid;">
+  </canvas>
+  <!-- Script dependencies, jQuery and socket.io -->
+  <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.3.4.js"></script>
+  <!-- Your client code -->
+  <script>
+  // Client code goes here
+  var socket = io();
+
+  socket.on('canvasHistory', function(data) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var history = data.history;
+
+    for (user in history) {
+      var userPoints = history[user];
+      for (var i = 0; i < userPoints.length; i++) {
+        var point = userPoints[i];
+        drawLine(point.x, point.y, point.type);
+      }
+    }
+
+  });
+
+  socket.on('mouseDrawing', function(data) {
+    console.log(data);
+    drawLine(data.x, data.y, data.type);
+  });
+
+  var canvas = $('#canvas')[0];
+  var ctx = canvas.getContext('2d');
+
+  function getMousePos(canvas, e) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  };
+
+  function drawLine(x, y, type) {
+    if (type === 'mousedown') {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    } else if (type === 'mousemove') {
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    } else {
+      ctx.closePath();
+    }
+  };
+
+  canvas.addEventListener('mousedown', function(e) {
+    var type = e.type;
+    var currentPos = getMousePos(canvas, e);
+    canvas.isDrawing = true;
+
+    drawLine(currentPos.x, currentPos.y, type);
+
+    socket.emit('mouseDrawing', {
+      x: currentPos.x,
+      y: currentPos.y,
+      type: type,
+      user: socket.id,
+      saved: false
+    });
+  });
+
+  canvas.addEventListener('mousemove', function(e) {
+    if (!canvas.isDrawing) {
+      return;
+    }
+    var type = e.type;
+    var currentPos = getMousePos(canvas, e);
+
+    drawLine(currentPos.x, currentPos.y, type);
+
+    socket.emit('mouseDrawing', {
+      x: currentPos.x,
+      y: currentPos.y,
+      type: type,
+      user: socket.id,
+      saved: false
+    });
+  });
+
+  canvas.addEventListener('mouseup', function(e) {
+    var type = e.type;
+    var currentPos = getMousePos(canvas, e);
+    canvas.isDrawing = false;
+
+    drawLine(currentPos.x, currentPos.y, type);
+
+    socket.emit('mouseDrawing', {
+      x: currentPos.x,
+      y: currentPos.y,
+      type: type,
+      user: socket.id,
+      saved: false
+    });
+  });
+
+  $(document).on('keydown', function(e) {
+    console.log(e);
+    // s or S key pressed
+    if(e.keyCode === 83 || e.keyCode === 115) {
+      console.log('s key was pressed!');
+      socket.emit('saveLines', { user: socket.id });
+    }
+
+    if(e.keyCode === 27) {
+      console.log('escape key was pressed');
+      socket.emit('clearLines');
+    }
+  });
+
+  </script>
+</body>
+
+</html>
