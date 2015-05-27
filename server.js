@@ -9,10 +9,12 @@ var http = require('http').Server(app);
 // initializes an instance of a socket.io server to mount onto the http server
 var io = require('socket.io')(http);
 
+// serves up our html file 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/index.html');
 });
 
+// tells the server to listen on port 3000 on the localhost
 http.listen(3000, function() {
   console.log('listening on *:3000');
 });
