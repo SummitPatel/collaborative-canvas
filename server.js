@@ -26,7 +26,8 @@ var canvasHistory = {};
 io.on('connection', function(socket) {
   // add the user to the list
   users[socket.id] = socket.id;
-  console.log('a user connected with id: ' + socket.id);
+  // tell the activity feed a new user has joined
+  io.emit('userConnect', { uid: socket.id});
 
   // if lines have already been drawn, show them to the newly connected user
   if (Object.keys(canvasHistory).length !== 0) {
@@ -61,7 +62,8 @@ io.on('connection', function(socket) {
 
     // remove the user from the list
     delete users[socket.id];
-    console.log('user with id %s disconnected', socket.id);
+    // tell the activity feed a user has left
+    io.emit('userDisconnect', { uid: socket.id});
   });
 
   // main drawing function

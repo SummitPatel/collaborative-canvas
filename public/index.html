@@ -2,13 +2,30 @@
 
 <head>
   <title>
-    Canvas Test
+    Collaborative Canvas
   </title>
 </head>
 
 <body>
   <!-- Drawing area -->
   <canvas id="canvas" width="500" height="300" style="border: 2px grey solid;"></canvas>
+
+  <section>
+    <h1>Hints</h1>
+    <ul>
+      <li>
+        <p>Press the 's' key to save your lines. They'll persist for other users even if you disconnect!</p>
+      </li>
+      <li>
+        <p>Press the 'esc' key to clear the canvas (and your saved history too!)</p>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h1>Activity Feed</h1>
+    <ul class="activity-feed"></ul>
+  </section>
 
   <!-- Script dependencies, jQuery and socket.io -->
   <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
@@ -44,6 +61,17 @@
   // draws the lines with the received data points
   socket.on('mouseDrawing', function(data) {
     drawLine(data.x, data.y, data.type);
+  });
+
+  // activity feed events
+  socket.on('userConnect', function(data) {
+    uid = data.uid;
+    $('.activity-feed').append('<li>A user connected with id: <em>' +  uid + '</em></li>');
+  });
+
+  socket.on('userDisconnect', function(data) {
+    uid = data.uid;
+    $('.activity-feed').append('<li>A user with id <em>' + uid + '</em> disconnected</li>');
   });
 
 
