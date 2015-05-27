@@ -1,4 +1,4 @@
-# A Simultaneous drawing application
+# A Simultaneous Drawing Application
 
 ## Setup
 

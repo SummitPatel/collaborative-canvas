@@ -2,8 +2,11 @@
 
 // Socket server code
 
+// initializes app to be a function handler for an http server
 var app = require('express')();
 var http = require('http').Server(app);
+
+// initializes an instance of a socket.io server to mount onto the http server
 var io = require('socket.io')(http);
 
 app.get('/', function(req, res) {
