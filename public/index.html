@@ -4,27 +4,64 @@
   <title>
     Collaborative Canvas
   </title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-content: flex-start;
+      align-items: center;
+    }
+
+    section {
+      display: flex;
+      width: 32rem;
+    }
+
+    canvas {
+      border: 2px grey solid;
+      height: 20rem;
+      width: 32rem;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+  </style>
 </head>
 
 <body>
   <!-- Drawing area -->
-  <canvas id="canvas" width="500" height="300" style="border: 2px grey solid;"></canvas>
+  <section>
+    <canvas id="canvas"></canvas>
+  </section>
+  
 
   <section>
-    <h1>Hints</h1>
-    <ul>
-      <li>
-        <p>Press the 's' key to save your lines. They'll persist for other users even if you disconnect!</p>
-      </li>
-      <li>
-        <p>Press the 'esc' key to clear the canvas (and your saved history too!)</p>
-      </li>
-    </ul>
+    <div>
+      <h1>Hints</h1>
+      <ul>
+        <li>
+          <p>Press the 's' key to save your lines. They'll persist for other users even if you disconnect!</p>
+        </li>
+        <li>
+          <p>Press the 'esc' key to clear the canvas (and your saved history too!)</p>
+        </li>
+      </ul>
+    </div>
   </section>
 
   <section>
+  <div>
     <h1>Activity Feed</h1>
     <ul class="activity-feed"></ul>
+  </div>
   </section>
 
   <!-- Script dependencies, jQuery and socket.io -->
